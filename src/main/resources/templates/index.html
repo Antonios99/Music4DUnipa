@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stati Emotivi</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            color: #333;
+            margin-top: 50px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 20px;
+            padding: 15px 30px;
+            margin: 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .happy { background-color: yellow; color: black; }
+        .sad { background-color: lightblue; color: black; }
+        .angry { background-color: red; color: white; }
+        .surprised { background-color: orange; color: black; }
+        #message {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        #chart-container {
+            width: 50%;
+            margin: 40px auto;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Scegli il tuo stato emotivo</h1>
+<form id="voteForm" action="/home" method="post">
+    <input type="hidden" name="ipAddress" id="ipAddress">
+
+    <button type="submit" name="emotion" value="happy" class="happy">😊 Felice</button>
+    <button type="submit" name="emotion" value="sad" class="sad">😢 Triste</button>
+    <button type="submit" name="emotion" value="angry" class="angry">😠 Arrabbiato</button>
+    <button type="submit" name="emotion" value="surprised" class="surprised">😲 Sorpreso</button>
+</form>
+
+<script>
+    // Ottenere l'IP pubblico con ipify e inserirlo nel form
+    fetch('https://api64.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('ipAddress').value = data.ip;
+        })
+        .catch(error => console.error('Errore nel recupero dell’IP:', error));
+</script>
+
+
+<p id="message"></p>
+
+<div id="chart-container">
+    <canvas id="emotionChart"></canvas>
+</div>
+
+<script>
+    const emotions = {
+        "Felice": 0,
+        "Triste": 0,
+        "Arrabbiato": 0,
+        "Sorpreso": 0
+    };
+
+    const ctx = document.getElementById('emotionChart').getContext('2d');
+    const emotionChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(emotions),
+            datasets: [{
+                data: Object.values(emotions),
+                backgroundColor: ['yellow', 'lightblue', 'red', 'orange']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    function showEmotion(emotion) {
+        const messageBox = document.getElementById('message');
+        messageBox.innerText = "Hai scelto: " + emotion;
+        messageBox.style.display = 'inline-block';
+
+        emotions[emotion]++;
+        emotionChart.data.datasets[0].data = Object.values(emotions);
+        emotionChart.update();
+    }
+</script>
+</body>
+</html>
