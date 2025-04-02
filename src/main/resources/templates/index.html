@@ -1,121 +1,459 @@
 <!DOCTYPE html>
-<html lang="it" xmlns:th="https://www.thymeleaf.org">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stati Emotivi</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
             text-align: center;
-            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             color: #333;
-            margin-top: 50px;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
         }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
         h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 15px;
         }
-        button {
-            font-size: 20px;
-            padding: 15px 30px;
-            margin: 15px;
-            border: none;
+
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+        }
+
+        .slider-container {
+            width: 90%;
+            margin: 30px auto;
+            text-align: left;
+            position: relative;
+            padding: 15px;
+            background-color: #f8f9fa;
             border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
-        button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .happy { background-color: yellow; color: black; }
-        .sad { background-color: lightblue; color: black; }
-        .angry { background-color: red; color: white; }
-        .surprised { background-color: orange; color: black; }
-        #message {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-top: 20px;
-            padding: 10px;
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #f37c7c, #f6b3b3, #b3e0f6, #78c5ef);
             border-radius: 8px;
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.8);
+            margin: 15px 0;
         }
-        #chart-container {
-            width: 50%;
-            margin: 40px auto;
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #4a69bd;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .energy-slider input[type="range"] {
+            background: linear-gradient(to right, #c8d6e5, #d1d8e0, #f8c291, #ff9f43);
+        }
+
+        label {
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .value-display {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #4a69bd;
+            background-color: #f1f2f6;
+            border-radius: 8px;
+            padding: 2px 10px;
+            margin-left: 10px;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            color: #576574;
+            font-size: 0.9em;
+        }
+
+        .btn {
+            background: linear-gradient(to right, #4776E6, #8E54E9);
+            color: white;
+            padding: 14px 28px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(142, 84, 233, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(142, 84, 233, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        #diagram-container {
+            width: 400px;
+            height: 400px;
+            position: relative;
+            margin: 30px auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        #emotionDiagram {
+            width: 100%;
+            height: 100%;
+        }
+
+        .quadrant-labels {
+            position: absolute;
+            font-size: 12px;
+            color: #555;
+            font-style: italic;
+        }
+
+        .q1 {
+            top: 25%;
+            right: 25%;
+        }
+
+        .q2 {
+            top: 25%;
+            left: 25%;
+        }
+
+        .q3 {
+            bottom: 25%;
+            left: 25%;
+        }
+
+        .q4 {
+            bottom: 25%;
+            right: 25%;
+        }
+
+        /* Stile per il campo di input della poltrona */
+        .seat-input {
+            margin: 20px auto;
+            max-width: 200px;
+        }
+
+        .seat-input input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #4a69bd;
+            border-radius: 8px;
+            font-size: 1.1em;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .seat-input label {
+            display: block;
+            margin-bottom: 8px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-<h1>Scegli il tuo stato emotivo</h1>
-<form id="voteForm" action="/home" method="post">
-    <input type="hidden" name="ipAddress" id="ipAddress">
+<div class="container">
+    <h1>Regola il tuo stato emotivo</h1>
 
-    <button type="submit" name="emotion" value="happy" class="happy">😊 Felice</button>
-    <button type="submit" name="emotion" value="sad" class="sad">😢 Triste</button>
-    <button type="submit" name="emotion" value="angry" class="angry">😠 Arrabbiato</button>
-    <button type="submit" name="emotion" value="surprised" class="surprised">😲 Sorpreso</button>
-</form>
+    <div class="seat-input">
+        <label for="seatNumber">Numero Poltrona:</label>
+        <input type="number" id="seatNumber" min="1" placeholder="Inserisci n° poltrona" required>
+    </div>
 
-<script>
-    // Ottenere l'IP pubblico con ipify e inserirlo nel form
-    fetch('https://api64.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('ipAddress').value = data.ip;
-        })
-        .catch(error => console.error('Errore nel recupero dell’IP:', error));
-</script>
+    <div class="slider-container">
+        <label for="emotionRange">Spiacevole - Piacevole: <span id="emotionValue" class="value-display">0</span></label>
+        <input type="range" id="emotionRange" min="-5" max="5" value="0" step="1">
+        <div class="slider-labels">
+            <span>Molto spiacevole</span>
+            <span>Neutro</span>
+            <span>Molto piacevole</span>
+        </div>
+    </div>
 
+    <div class="slider-container energy-slider">
+        <label for="energyRange">Bassa Energia - Alta Energia: <span id="energyValue" class="value-display">0</span></label>
+        <input type="range" id="energyRange" min="-5" max="5" value="0" step="1">
+        <div class="slider-labels">
+            <span>Molto bassa</span>
+            <span>Neutra</span>
+            <span>Molto alta</span>
+        </div>
+    </div>
 
-<p id="message"></p>
+    <button class="btn" onclick="sendData()">📤 Registra emozione</button>
 
-<div id="chart-container">
-    <canvas id="emotionChart"></canvas>
+    <div id="diagram-container">
+        <canvas id="emotionDiagram"></canvas>
+        <div class="quadrant-labels q1">Eccitazione</div>
+        <div class="quadrant-labels q2">Stress</div>
+        <div class="quadrant-labels q3">Depressione</div>
+        <div class="quadrant-labels q4">Rilassamento</div>
+    </div>
 </div>
 
 <script>
-    const emotions = {
-        "Felice": 0,
-        "Triste": 0,
-        "Arrabbiato": 0,
-        "Sorpreso": 0
+    function updateValues() {
+        document.getElementById('emotionValue').innerText = document.getElementById('emotionRange').value;
+        document.getElementById('energyValue').innerText = document.getElementById('energyRange').value;
+        drawPoint();
+    }
+
+    document.getElementById('emotionRange').addEventListener('input', updateValues);
+    document.getElementById('energyRange').addEventListener('input', updateValues);
+
+    function drawPoint() {
+        const canvas = document.getElementById('emotionDiagram');
+        const ctx = canvas.getContext('2d');
+
+        const width = canvas.width = 400;
+        const height = canvas.height = 400;
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        const emotionValue = parseInt(document.getElementById('emotionRange').value);
+        const energyValue = parseInt(document.getElementById('energyRange').value);
+
+        // Mappare i valori (-5,5) in coordinate canvas (0,400)
+        const x = centerX + (emotionValue * (width / 12));
+        const y = centerY - (energyValue * (height / 12));
+
+        // Pulire il canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Disegnare sfondo quadranti con colori sfumati
+        const gradient1 = ctx.createLinearGradient(centerX, 0, width, centerY);
+        gradient1.addColorStop(0, 'rgba(255, 205, 86, 0.1)');
+        gradient1.addColorStop(1, 'rgba(255, 205, 86, 0.3)');
+
+        const gradient2 = ctx.createLinearGradient(0, 0, centerX, centerY);
+        gradient2.addColorStop(0, 'rgba(255, 99, 132, 0.1)');
+        gradient2.addColorStop(1, 'rgba(255, 99, 132, 0.3)');
+
+        const gradient3 = ctx.createLinearGradient(0, centerY, centerX, height);
+        gradient3.addColorStop(0, 'rgba(54, 162, 235, 0.1)');
+        gradient3.addColorStop(1, 'rgba(54, 162, 235, 0.3)');
+
+        const gradient4 = ctx.createLinearGradient(centerX, centerY, width, height);
+        gradient4.addColorStop(0, 'rgba(75, 192, 192, 0.1)');
+        gradient4.addColorStop(1, 'rgba(75, 192, 192, 0.3)');
+
+        // Disegnare i quadranti con gradienti
+        ctx.fillStyle = gradient1;
+        ctx.fillRect(centerX, 0, width - centerX, centerY);
+
+        ctx.fillStyle = gradient2;
+        ctx.fillRect(0, 0, centerX, centerY);
+
+        ctx.fillStyle = gradient3;
+        ctx.fillRect(0, centerY, centerX, height - centerY);
+
+        ctx.fillStyle = gradient4;
+        ctx.fillRect(centerX, centerY, width - centerX, height - centerY);
+
+        // Disegnare assi
+        ctx.strokeStyle = "#2c3e50";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(centerX, 0);
+        ctx.lineTo(centerX, height);
+        ctx.moveTo(0, centerY);
+        ctx.lineTo(width, centerY);
+        ctx.stroke();
+
+        // Disegnare cerchi concentrici per riferimento
+        ctx.strokeStyle = "rgba(44, 62, 80, 0.2)";
+        ctx.lineWidth = 1;
+        for (let i = 1; i <= 5; i++) {
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, (width / 12) * i, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Disegnare etichette
+        ctx.font = "bold 16px 'Segoe UI', sans-serif";
+        ctx.fillStyle = "#2c3e50";
+        ctx.textAlign = "center";
+        ctx.fillText("ALTA ENERGIA", centerX, 25);
+        ctx.fillText("BASSA ENERGIA", centerX, height - 10);
+
+        ctx.textAlign = "left";
+        ctx.fillText("SPIACEVOLE", 10, centerY - 10);
+
+        ctx.textAlign = "right";
+        ctx.fillText("PIACEVOLE", width - 10, centerY - 10);
+
+        // Disegnare il punto con effetto ombra
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+
+        // Gradiente per il punto
+        const pointGradient = ctx.createRadialGradient(x, y, 0, x, y, 12);
+        pointGradient.addColorStop(0, '#4a69bd');
+        pointGradient.addColorStop(1, '#2c3e50');
+
+        ctx.fillStyle = pointGradient;
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Rimuovere l'ombra per il resto
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
+        // Aggiungere un effetto di brillantezza al punto
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.beginPath();
+        ctx.arc(x - 3, y - 3, 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function sendData() {
+        const seatNumberInput = document.getElementById('seatNumber');
+        const seatNumber = seatNumberInput.value;
+
+        // Controllo validità del numero poltrona
+        if (!seatNumber || seatNumber <= 0) {
+            showNotification('⚠️ Inserisci un numero di poltrona valido!', 'error');
+            seatNumberInput.focus();
+            return;
+        }
+
+        const piacevolezza = parseInt(document.getElementById('emotionRange').value);
+        const energia = parseInt(document.getElementById('energyRange').value);
+        //const ipAddress = "192.168.1.1";
+
+        const data = {
+            piacevolezza: piacevolezza,
+            energia: energia,
+            utente_id: seatNumber // Utilizzare il numero della poltrona come ID utente
+            //utente_id: ipAddress
+        };
+
+        fetch("/home", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Errore durante l'invio dei dati");
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log("Risposta ricevuta:", data);
+                showNotification('✓ Emozione registrata con successo!', 'success');
+            })
+            .catch(error => {
+                console.error("Errore:", error);
+                showNotification('❌ Errore durante l\'invio dei dati', 'error');
+            });
+    }
+
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.style.position = 'fixed';
+        notification.style.top = '20px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.padding = '15px 30px';
+        notification.style.color = 'white';
+        notification.style.borderRadius = '50px';
+        notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
+        notification.style.zIndex = '1000';
+        notification.style.animation = 'fadeIn 0.5s';
+        notification.textContent = message;
+
+        // Stile in base al tipo di notifica
+        if (type === 'error') {
+            notification.style.background = 'linear-gradient(to right, #ff4b2b, #ff416c)';
+        } else {
+            notification.style.background = 'linear-gradient(to right, #00b09b, #96c93d)';
+        }
+
+        document.body.appendChild(notification);
+
+        // Rimuovi la notifica dopo 3 secondi
+        setTimeout(() => {
+            notification.style.animation = 'fadeOut 0.5s';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 500);
+        }, 3000);
+    }
+
+    // Esegui il disegno iniziale
+    window.onload = function() {
+        drawPoint();
     };
 
-    const ctx = document.getElementById('emotionChart').getContext('2d');
-    const emotionChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: Object.keys(emotions),
-            datasets: [{
-                data: Object.values(emotions),
-                backgroundColor: ['yellow', 'lightblue', 'red', 'orange']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
+    // Aggiungi animazioni CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
         }
-    });
 
-    function showEmotion(emotion) {
-        const messageBox = document.getElementById('message');
-        messageBox.innerText = "Hai scelto: " + emotion;
-        messageBox.style.display = 'inline-block';
-
-        emotions[emotion]++;
-        emotionChart.data.datasets[0].data = Object.values(emotions);
-        emotionChart.update();
-    }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translate(-50%, 0); }
+            to { opacity: 0; transform: translate(-50%, -20px); }
+        }
+    `;
+    document.head.appendChild(style);
 </script>
+
 </body>
 </html>

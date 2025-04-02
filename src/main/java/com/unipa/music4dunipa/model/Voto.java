@@ -7,14 +7,30 @@ import jakarta.persistence.*;
 public class Voto{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable=false)
     private String utente_id;
 
     @Column(nullable=false)
-    private String emozione;
+    private Integer piacevolezza;
 
-    public Voto(String utente_id, String emozione) {
+    @Column(nullable=false)
+    private Integer energia;
+
+    public Voto(){}
+
+
+    public Voto( String utente_id, Integer energia, Integer piacevolezza) {
+        //this.id = id;
         this.utente_id = utente_id;
-        this.emozione = emozione;
+        this.piacevolezza = piacevolezza;
+        this.energia = energia;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getUtente_id(){
@@ -25,11 +41,19 @@ public class Voto{
         this.utente_id = utente_id;
     }
 
-    public String getEmozione() {
-        return emozione;
+    public Integer getPiacevolezza() {
+        return piacevolezza;
     }
 
-    public void setEmozione(String emozione) {
-        this.emozione = emozione;
+    public void setPiacevolezza(Integer piacevolezza) {
+        this.piacevolezza = piacevolezza;
+    }
+
+    public Integer getEnergia() {
+        return energia;
+    }
+
+    public void setEnergia(Integer energia) {
+        this.energia = energia;
     }
 }
