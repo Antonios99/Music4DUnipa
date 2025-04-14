@@ -11,8 +11,8 @@ public class VotoService {
     @Autowired
     private VotoInterface votoRepository;
 
-    public Voto insertVoto(String id_utente, Integer piacevolezza, Integer energia) {
-        Voto voto = new Voto(id_utente, piacevolezza, energia);
+    public Voto insertVoto(String id_utente, Integer piacevolezza, Integer energia, String genere, String tipo_strumento, Integer age) {
+        Voto voto = new Voto(id_utente, piacevolezza, energia, genere, tipo_strumento, age);
         return votoRepository.save(voto);
     }
 

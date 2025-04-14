@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stati Emotivi</title>
-
     <style>
         body {
             font-family: 'Segoe UI', 'Roboto', sans-serif;
@@ -17,7 +16,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
@@ -46,20 +45,136 @@
             background: linear-gradient(to right, #6a11cb, #2575fc);
         }
 
-        .slider-container {
-            width: 90%;
+        .form-fields {
+            display: flex;
+            justify-content: space-between;
             margin: 30px auto;
-            text-align: left;
+            max-width: 800px;
+            gap: 20px;
+        }
+
+        .field-container {
+            flex: 1;
+            margin: 0;
+            box-sizing: border-box;
             position: relative;
-            padding: 15px;
+        }
+
+        .field-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: left;
+        }
+
+        .field-container select,
+        .field-container input[type="text"],
+        .field-container input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #4a69bd;
+            border-radius: 8px;
+            font-size: 1em;
+            background-color: white;
+            color: #333;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            height: 46px;
+        }
+
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .field-container select:focus,
+        .field-container input[type="number"]:focus,
+        .field-container input[type="text"]:focus {
+            outline: none;
+            border-color: #8E54E9;
+            box-shadow: 0 0 0 3px rgba(142, 84, 233, 0.2);
+        }
+
+        .field-container.error input,
+        .field-container.error select {
+            border-color: #ff416c;
+        }
+
+        .error-message {
+            color: #ff416c;
+            font-size: 0.85em;
+            margin-top: 5px;
+            font-weight: bold;
+            display: none;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            text-align: left;
+        }
+
+        .field-container.error .error-message {
+            display: block;
+        }
+
+        .slider-container {
+            width: 95%;
+            margin: 30px auto;
+            text-align: center;
+            position: relative;
+            padding: 20px 15px;
             background-color: #f8f9fa;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
+        .slider-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+            display: block;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .label-left, .label-right {
+            flex: 0 0 150px;
+            color: #576574;
+            font-size: 0.9em;
+        }
+
+        .label-left {
+            text-align: right;
+        }
+
+        .label-right {
+            text-align: left;
+        }
+
+        .slider-center {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         input[type="range"] {
             width: 100%;
-            height: 8px;
+            height: 10px;
             -webkit-appearance: none;
             background: linear-gradient(to right, #f37c7c, #f6b3b3, #b3e0f6, #78c5ef);
             border-radius: 8px;
@@ -68,8 +183,8 @@
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             background: #4a69bd;
             border-radius: 50%;
             cursor: pointer;
@@ -80,15 +195,6 @@
             background: linear-gradient(to right, #c8d6e5, #d1d8e0, #f8c291, #ff9f43);
         }
 
-        label {
-            font-size: 1.2em;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-
         .value-display {
             font-size: 1.4em;
             font-weight: bold;
@@ -96,15 +202,7 @@
             background-color: #f1f2f6;
             border-radius: 8px;
             padding: 2px 10px;
-            margin-left: 10px;
-        }
-
-        .slider-labels {
-            display: flex;
-            justify-content: space-between;
             margin-top: 5px;
-            color: #576574;
-            font-size: 0.9em;
         }
 
         .btn {
@@ -129,6 +227,13 @@
             transform: translateY(1px);
         }
 
+        .btn:disabled {
+            background: linear-gradient(to right, #a0a0a0, #c0c0c0);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         #diagram-container {
             width: 400px;
             height: 400px;
@@ -149,7 +254,10 @@
             position: absolute;
             font-size: 12px;
             color: #555;
-            font-style: italic;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 4px 8px;
+            border-radius: 4px;
         }
 
         .q1 {
@@ -172,71 +280,303 @@
             right: 25%;
         }
 
-        /* Stile per il campo di input della poltrona */
-        .seat-input {
-            margin: 20px auto;
-            max-width: 200px;
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            color: white;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: fadeIn 0.5s;
         }
 
-        .seat-input input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #4a69bd;
-            border-radius: 8px;
-            font-size: 1.1em;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        .notification.success {
+            background: linear-gradient(to right, #00b09b, #96c93d);
         }
 
-        .seat-input label {
-            display: block;
-            margin-bottom: 8px;
-            text-align: center;
+        .notification.error {
+            background: linear-gradient(to right, #ff4b2b, #ff416c);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+            to {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-fields {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .field-container {
+                width: 90%;
+                margin: 0;
+            }
+
+            #diagram-container {
+                width: 300px;
+                height: 300px;
+            }
+
+            /* Mantiene il layout orizzontale degli slider anche su schermi piccoli */
+            .slider-wrapper {
+                flex-direction: row; /* Mantiene la direzione orizzontale */
+                align-items: center;
+                gap: 5px;
+            }
+
+            .label-left, .label-right {
+                flex: 0 0 80px; /* Larghezza fissa più piccola */
+                text-align: center;
+                font-size: 0.7em; /* Testo più piccolo */
+                margin: 0;
+            }
+
+            .label-left {
+                text-align: right;
+            }
+
+            .label-right {
+                text-align: left;
+            }
+
+            .slider-center {
+                width: 100%;
+            }
+
+            input[type="range"] {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            /* Ridimensiona il contenitore dello slider */
+            .slider-container {
+                padding: 12px 10px;
+                margin: 20px auto;
+            }
+
+            .slider-title {
+                font-size: 1em;
+                margin-bottom: 8px;
+            }
+
+            /* Migliora la visualizzazione della value display */
+            .value-display {
+                margin-top: 2px;
+                font-size: 1.2em;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Regola il tuo stato emotivo</h1>
+    <h1>Cosa provi in questo momento?</h1>
 
-    <div class="seat-input">
-        <label for="seatNumber">Numero Poltrona:</label>
-        <input type="number" id="seatNumber" min="1" placeholder="Inserisci n° poltrona" required>
+    <div class="form-fields">
+        <div class="field-container">
+            <label for="instrument">Strumento musicale:</label>
+            <select id="instrument" required>
+                <option value="" disabled selected>Seleziona strumento</option>
+                <optgroup label="Archi">
+                    <option value="violino">Violino</option>
+                    <option value="viola">Viola</option>
+                    <option value="violoncello">Violoncello</option>
+                    <option value="contrabbasso">Contrabbasso</option>
+                </optgroup>
+                <optgroup label="Fiati legni">
+                    <option value="flauto">Flauto</option>
+                    <option value="oboe">Oboe</option>
+                    <option value="clarinetto">Clarinetto</option>
+                    <option value="fagotto">Fagotto</option>
+                    <option value="sassofono">Sassofono</option>
+                </optgroup>
+                <optgroup label="Fiati ottoni">
+                    <option value="tromba">Tromba</option>
+                    <option value="corno">Corno</option>
+                    <option value="trombone">Trombone</option>
+                    <option value="tuba">Tuba</option>
+                </optgroup>
+                <optgroup label="Tastiere">
+                    <option value="pianoforte">Pianoforte</option>
+                    <option value="organo">Organo</option>
+                    <option value="clavicembalo">Clavicembalo</option>
+                </optgroup>
+                <optgroup label="Percussioni">
+                    <option value="timpani">Timpani</option>
+                    <option value="batteria">Batteria</option>
+                    <option value="marimba">Marimba</option>
+                    <option value="vibrafono">Vibrafono</option>
+                </optgroup>
+                <optgroup label="Altro">
+                    <option value="arpa">Arpa</option>
+                    <option value="chitarra">Chitarra</option>
+                    <option value="voce">Voce</option>
+                    <option value="altro">Altro</option>
+                </optgroup>
+            </select>
+            <div class="error-message">Seleziona uno strumento</div>
+        </div>
+
+        <div class="field-container">
+            <label for="gender">Genere:</label>
+            <select id="gender" required>
+                <option value="" disabled selected>Seleziona genere</option>
+                <option value="maschio">Maschio</option>
+                <option value="femmina">Femmina</option>
+                <option value="altro">Altro</option>
+            </select>
+            <div class="error-message">Seleziona un genere</div>
+        </div>
+
+        <div class="field-container">
+            <label for="seatNumber">Numero poltrona:</label>
+            <input type="number" id="seatNumber" min="1" max="300" required placeholder="Inserisci numero poltrona">
+            <div class="error-message">Formato non valido</div>
+        </div>
+
+        <div class="field-container">
+            <label for="age">Età:</label>
+            <input type="number" id="age" min="1" max="120" required placeholder="Inserisci età">
+            <div class="error-message">Età deve essere tra 1 e 120 anni</div>
+        </div>
     </div>
 
     <div class="slider-container">
-        <label for="emotionRange">Spiacevole - Piacevole: <span id="emotionValue" class="value-display">0</span></label>
-        <input type="range" id="emotionRange" min="-5" max="5" value="0" step="1">
-        <div class="slider-labels">
-            <span>Molto spiacevole</span>
-            <span>Neutro</span>
-            <span>Molto piacevole</span>
+        <div class="slider-title">PIACEVOLEZZA</div>
+        <div class="slider-wrapper">
+            <span class="label-left">Molto spiacevole</span>
+            <div class="slider-center">
+                <input type="range" id="emotionRange" min="-5" max="5" value="0" step="1">
+                <span id="emotionValue" class="value-display">0</span>
+            </div>
+            <span class="label-right">Molto piacevole</span>
         </div>
     </div>
 
     <div class="slider-container energy-slider">
-        <label for="energyRange">Bassa Energia - Alta Energia: <span id="energyValue" class="value-display">0</span></label>
-        <input type="range" id="energyRange" min="-5" max="5" value="0" step="1">
-        <div class="slider-labels">
-            <span>Molto bassa</span>
-            <span>Neutra</span>
-            <span>Molto alta</span>
+        <div class="slider-title">ENERGIA</div>
+        <div class="slider-wrapper">
+            <span class="label-left">Molto bassa</span>
+            <div class="slider-center">
+                <input type="range" id="energyRange" min="-5" max="5" value="0" step="1">
+                <span id="energyValue" class="value-display">0</span>
+            </div>
+            <span class="label-right">Molto alta</span>
         </div>
     </div>
 
-    <button class="btn" onclick="sendData()">📤 Registra emozione</button>
+    <button id="submitBtn" class="btn" onclick="sendData()">📤 Registra emozione</button>
 
     <div id="diagram-container">
         <canvas id="emotionDiagram"></canvas>
-        <div class="quadrant-labels q1">Eccitazione</div>
-        <div class="quadrant-labels q2">Stress</div>
-        <div class="quadrant-labels q3">Depressione</div>
-        <div class="quadrant-labels q4">Rilassamento</div>
+
     </div>
 </div>
 
 <script>
+    // Riferimenti elementi del form
+    const instrumentSelect = document.getElementById('instrument');
+    const genderSelect = document.getElementById('gender');
+    const seatNumberInput = document.getElementById('seatNumber');
+    const ageInput = document.getElementById('age');
+    const submitBtn = document.getElementById('submitBtn');
+
+
+    // Aggiungi listener per la validazione in tempo reale
+    seatNumberInput.addEventListener('input', validateSeatNumber);
+    ageInput.addEventListener('input', validateAge);
+    instrumentSelect.addEventListener('change', validateInstrument);
+    genderSelect.addEventListener('change', validateGender);
+
+    // Funzioni di validazione
+    function validateSeatNumber() {
+        const seatNumber = seatNumberInput.value.trim();
+        const seatContainer = seatNumberInput.parentElement;
+
+        if (seatNumber === '') {
+            seatContainer.classList.add('error');
+            seatContainer.querySelector('.error-message').textContent = 'Inserisci un numero di poltrona';
+            return false;
+        } else {
+            seatContainer.classList.remove('error');
+            return true;
+        }
+    }
+
+    function validateAge() {
+        const age = parseInt(ageInput.value);
+        const ageContainer = ageInput.parentElement;
+
+        if (isNaN(age) || ageInput.value.trim() === '') {
+            ageContainer.classList.add('error');
+            ageContainer.querySelector('.error-message').textContent = 'Inserisci un\'età valida';
+            return false;
+        } else if (age < 1 || age > 100) {
+            ageContainer.classList.add('error');
+            ageContainer.querySelector('.error-message').textContent = 'L\'età deve essere compresa tra 1 e 100 anni';
+            return false;
+        } else {
+            ageContainer.classList.remove('error');
+            return true;
+        }
+    }
+
+    function validateInstrument() {
+        const instrumentContainer = instrumentSelect.parentElement;
+        if (instrumentSelect.value === "") {
+            instrumentContainer.classList.add('error');
+            return false;
+        } else {
+            instrumentContainer.classList.remove('error');
+            return true;
+        }
+    }
+
+    function validateGender() {
+        const genderContainer = genderSelect.parentElement;
+        if (genderSelect.value === "") {
+            genderContainer.classList.add('error');
+            return false;
+        } else {
+            genderContainer.classList.remove('error');
+            return true;
+        }
+    }
+
+    // Validazione completa del form
+    function validateForm() {
+        const isInstrumentValid = validateInstrument();
+        const isGenderValid = validateGender();
+        const isSeatNumberValid = validateSeatNumber();
+        const isAgeValid = validateAge();
+
+        return isInstrumentValid && isGenderValid && isSeatNumberValid && isAgeValid;
+    }
+
     function updateValues() {
         document.getElementById('emotionValue').innerText = document.getElementById('emotionRange').value;
         document.getElementById('energyValue').innerText = document.getElementById('energyRange').value;
@@ -249,24 +589,17 @@
     function drawPoint() {
         const canvas = document.getElementById('emotionDiagram');
         const ctx = canvas.getContext('2d');
-
         const width = canvas.width = 400;
         const height = canvas.height = 400;
-
         const centerX = width / 2;
         const centerY = height / 2;
-
         const emotionValue = parseInt(document.getElementById('emotionRange').value);
         const energyValue = parseInt(document.getElementById('energyRange').value);
-
-        // Mappare i valori (-5,5) in coordinate canvas (0,400)
         const x = centerX + (emotionValue * (width / 12));
         const y = centerY - (energyValue * (height / 12));
 
-        // Pulire il canvas
         ctx.clearRect(0, 0, width, height);
 
-        // Disegnare sfondo quadranti con colori sfumati
         const gradient1 = ctx.createLinearGradient(centerX, 0, width, centerY);
         gradient1.addColorStop(0, 'rgba(255, 205, 86, 0.1)');
         gradient1.addColorStop(1, 'rgba(255, 205, 86, 0.3)');
@@ -283,20 +616,15 @@
         gradient4.addColorStop(0, 'rgba(75, 192, 192, 0.1)');
         gradient4.addColorStop(1, 'rgba(75, 192, 192, 0.3)');
 
-        // Disegnare i quadranti con gradienti
         ctx.fillStyle = gradient1;
         ctx.fillRect(centerX, 0, width - centerX, centerY);
-
         ctx.fillStyle = gradient2;
         ctx.fillRect(0, 0, centerX, centerY);
-
         ctx.fillStyle = gradient3;
         ctx.fillRect(0, centerY, centerX, height - centerY);
-
         ctx.fillStyle = gradient4;
         ctx.fillRect(centerX, centerY, width - centerX, height - centerY);
 
-        // Disegnare assi
         ctx.strokeStyle = "#2c3e50";
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -306,7 +634,6 @@
         ctx.lineTo(width, centerY);
         ctx.stroke();
 
-        // Disegnare cerchi concentrici per riferimento
         ctx.strokeStyle = "rgba(44, 62, 80, 0.2)";
         ctx.lineWidth = 1;
         for (let i = 1; i <= 5; i++) {
@@ -315,26 +642,21 @@
             ctx.stroke();
         }
 
-        // Disegnare etichette
         ctx.font = "bold 16px 'Segoe UI', sans-serif";
         ctx.fillStyle = "#2c3e50";
         ctx.textAlign = "center";
-        ctx.fillText("ALTA ENERGIA", centerX, 25);
-        ctx.fillText("BASSA ENERGIA", centerX, height - 10);
-
+        ctx.fillText("ALTA ENERGIA", centerX, 10);
+        ctx.fillText("BASSA ENERGIA", centerX, height - 5);
         ctx.textAlign = "left";
-        ctx.fillText("SPIACEVOLE", 10, centerY - 10);
-
+        ctx.fillText("SPIACEVOLE", 10, centerY - 5);
         ctx.textAlign = "right";
-        ctx.fillText("PIACEVOLE", width - 10, centerY - 10);
+        ctx.fillText("PIACEVOLE", width - 10, centerY - 5);
 
-        // Disegnare il punto con effetto ombra
         ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
         ctx.shadowBlur = 10;
         ctx.shadowOffsetX = 2;
         ctx.shadowOffsetY = 2;
 
-        // Gradiente per il punto
         const pointGradient = ctx.createRadialGradient(x, y, 0, x, y, 12);
         pointGradient.addColorStop(0, '#4a69bd');
         pointGradient.addColorStop(1, '#2c3e50');
@@ -344,13 +666,11 @@
         ctx.arc(x, y, 10, 0, Math.PI * 2);
         ctx.fill();
 
-        // Rimuovere l'ombra per il resto
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
 
-        // Aggiungere un effetto di brillantezza al punto
         ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
         ctx.beginPath();
         ctx.arc(x - 3, y - 3, 3, 0, Math.PI * 2);
@@ -358,26 +678,35 @@
     }
 
     function sendData() {
-        const seatNumberInput = document.getElementById('seatNumber');
-        const seatNumber = seatNumberInput.value;
 
-        // Controllo validità del numero poltrona
-        if (!seatNumber || seatNumber <= 0) {
-            showNotification('⚠️ Inserisci un numero di poltrona valido!', 'error');
-            seatNumberInput.focus();
+        // Prima verifica la validità di tutti i campi
+        if (!validateForm()) {
+            showNotification('⚠️ Correggi gli errori nei campi evidenziati', 'error');
             return;
         }
 
-        const piacevolezza = parseInt(document.getElementById('emotionRange').value);
-        const energia = parseInt(document.getElementById('energyRange').value);
-        //const ipAddress = "192.168.1.1";
+        
+        const genderSelect = document.getElementById('gender');
+        const instrumentSelect = document.getElementById('instrument');
+        const seatNumberInput = document.getElementById('seatNumber');
+        const ageInput = document.getElementById('age');
+
+        if (genderSelect.value === "" || instrumentSelect.value === "" || seatNumberInput.value === "" || ageInput.value === "") {
+            showNotification('⚠️ Seleziona tutti i campi!', 'error');
+            return;
+        }
 
         const data = {
-            piacevolezza: piacevolezza,
-            energia: energia,
-            utente_id: seatNumber // Utilizzare il numero della poltrona come ID utente
-            //utente_id: ipAddress
+            utente_id: seatNumberInput.value,
+            piacevolezza: parseInt(document.getElementById('emotionRange').value),
+            energia: parseInt(document.getElementById('energyRange').value),
+            genere: genderSelect.value,
+            tipo_strumento: instrumentSelect.value,
+            age: parseInt(ageInput.value)
         };
+
+        // Disabilita il pulsante durante l'invio
+        submitBtn.disabled = true;
 
         fetch("/home", {
             method: "POST",
@@ -387,73 +716,25 @@
             body: JSON.stringify(data)
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error("Errore durante l'invio dei dati");
-                }
+                if (!response.ok) throw new Error("Errore durante l'invio dei dati");
                 return response.text();
             })
-            .then(data => {
-                console.log("Risposta ricevuta:", data);
-                showNotification('✓ Emozione registrata con successo!', 'success');
-            })
-            .catch(error => {
-                console.error("Errore:", error);
-                showNotification('❌ Errore durante l\'invio dei dati', 'error');
-            });
+            .then(() => showNotification('✓ Emozione registrata con successo!', 'success'))
+            .catch(() => showNotification('❌ Errore durante l\'invio dei dati', 'error'));
     }
 
     function showNotification(message, type) {
         const notification = document.createElement('div');
-        notification.style.position = 'fixed';
-        notification.style.top = '20px';
-        notification.style.left = '50%';
-        notification.style.transform = 'translateX(-50%)';
-        notification.style.padding = '15px 30px';
-        notification.style.color = 'white';
-        notification.style.borderRadius = '50px';
-        notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
-        notification.style.zIndex = '1000';
-        notification.style.animation = 'fadeIn 0.5s';
+        notification.className = `notification ${type}`;
         notification.textContent = message;
-
-        // Stile in base al tipo di notifica
-        if (type === 'error') {
-            notification.style.background = 'linear-gradient(to right, #ff4b2b, #ff416c)';
-        } else {
-            notification.style.background = 'linear-gradient(to right, #00b09b, #96c93d)';
-        }
-
         document.body.appendChild(notification);
-
-        // Rimuovi la notifica dopo 3 secondi
         setTimeout(() => {
             notification.style.animation = 'fadeOut 0.5s';
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 500);
+            setTimeout(() => document.body.removeChild(notification), 500);
         }, 3000);
     }
 
-    // Esegui il disegno iniziale
-    window.onload = function() {
-        drawPoint();
-    };
-
-    // Aggiungi animazioni CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, -20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translate(-50%, 0); }
-            to { opacity: 0; transform: translate(-50%, -20px); }
-        }
-    `;
-    document.head.appendChild(style);
+    window.onload = drawPoint;
 </script>
-
 </body>
 </html>

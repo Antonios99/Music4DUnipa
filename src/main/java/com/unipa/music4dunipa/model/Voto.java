@@ -19,14 +19,26 @@ public class Voto{
     @Column(nullable=false)
     private Integer energia;
 
+    @Column(nullable=false)
+    private String genere;
+
+    @Column(nullable=false)
+    private String tipo_strumento;
+
+    @Column(nullable=false)
+    private Integer age;
+
     public Voto(){}
 
 
-    public Voto( String utente_id, Integer energia, Integer piacevolezza) {
+    public Voto( String utente_id, Integer energia, Integer piacevolezza, String genere, String tipo_strumento, Integer age) {
         //this.id = id;
         this.utente_id = utente_id;
         this.piacevolezza = piacevolezza;
         this.energia = energia;
+        this.genere = genere;
+        this.tipo_strumento = tipo_strumento;
+        this.age = age;
     }
 
     public Integer getId() {
@@ -55,5 +67,32 @@ public class Voto{
 
     public void setEnergia(Integer energia) {
         this.energia = energia;
+    }
+
+    public String getGenere(){
+
+        return genere;
+    }
+    public void setGenere(String genere) {
+
+        this.genere = genere;
+    }
+
+    public String getTipo_strumento(){
+
+        return tipo_strumento;
+    }
+
+    public void setTipo_strumento(String tipo_strumento) {
+
+        this.tipo_strumento = tipo_strumento;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 }
