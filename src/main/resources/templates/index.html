@@ -48,9 +48,9 @@
         .form-fields {
             display: flex;
             justify-content: space-between;
-            margin: 30px auto;
+            margin: 100px auto;
             max-width: 800px;
-            gap: 20px;
+            gap: 15px;
         }
 
         .field-container {
@@ -328,7 +328,7 @@
             .form-fields {
                 flex-direction: column;
                 align-items: center;
-                gap: 15px;
+                gap: 50px;
             }
 
             .field-container {
@@ -598,6 +598,9 @@
         const x = centerX + (emotionValue * (width / 12));
         const y = centerY - (energyValue * (height / 12));
 
+        // Raggio del cerchio più esterno
+        const maxRadius = (width / 12) * 5;
+
         ctx.clearRect(0, 0, width, height);
 
         const gradient1 = ctx.createLinearGradient(centerX, 0, width, centerY);
@@ -625,13 +628,14 @@
         ctx.fillStyle = gradient4;
         ctx.fillRect(centerX, centerY, width - centerX, height - centerY);
 
+        // Disegno delle linee fino al cerchio più esterno
         ctx.strokeStyle = "#2c3e50";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(centerX, 0);
-        ctx.lineTo(centerX, height);
-        ctx.moveTo(0, centerY);
-        ctx.lineTo(width, centerY);
+        ctx.moveTo(centerX, centerY - maxRadius); // Da alto centro
+        ctx.lineTo(centerX, centerY + maxRadius); // A basso centro
+        ctx.moveTo(centerX - maxRadius, centerY); // Da centro sinistra
+        ctx.lineTo(centerX + maxRadius, centerY); // A centro destra
         ctx.stroke();
 
         ctx.strokeStyle = "rgba(44, 62, 80, 0.2)";
@@ -642,15 +646,30 @@
             ctx.stroke();
         }
 
-        ctx.font = "bold 16px 'Segoe UI', sans-serif";
+        // MODIFICA: Testo ALTA ENERGIA scritto orizzontalmente in alto
+        ctx.font = "bold 14px 'Segoe UI', sans-serif";
         ctx.fillStyle = "#2c3e50";
         ctx.textAlign = "center";
-        ctx.fillText("ALTA ENERGIA", centerX, 10);
-        ctx.fillText("BASSA ENERGIA", centerX, height - 5);
-        ctx.textAlign = "left";
-        ctx.fillText("SPIACEVOLE", 10, centerY - 5);
-        ctx.textAlign = "right";
-        ctx.fillText("PIACEVOLE", width - 10, centerY - 5);
+        ctx.fillText("ALTA ENERGIA", centerX, 20);
+
+        // MODIFICA: Testo BASSA ENERGIA scritto orizzontalmente in basso
+        ctx.fillText("BASSA ENERGIA", centerX, height - 10);
+
+        // Scrittura verticale per "SPIACEVOLE"
+        ctx.save();
+        ctx.translate(20, centerY);
+        ctx.rotate(-Math.PI/2);
+        ctx.textAlign = "center";
+        ctx.fillText("SPIACEVOLE", 0, 0);
+        ctx.restore();
+
+        // Scrittura verticale per "PIACEVOLE"
+        ctx.save();
+        ctx.translate(width - 20, centerY);
+        ctx.rotate(Math.PI/2);
+        ctx.textAlign = "center";
+        ctx.fillText("PIACEVOLE", 0, 0);
+        ctx.restore();
 
         ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
         ctx.shadowBlur = 10;
@@ -685,7 +704,7 @@
             return;
         }
 
-        
+
         const genderSelect = document.getElementById('gender');
         const instrumentSelect = document.getElementById('instrument');
         const seatNumberInput = document.getElementById('seatNumber');
